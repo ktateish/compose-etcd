@@ -1,0 +1,36 @@
+version: '2'
+services:
+  {{.Name}}:
+    image: {{.Image}}
+    ports:
+      - {{.ListenPublicAddr}}:{{.ClientPort}}:{{.ClientPort}}
+      - {{.ListenPublicAddr}}:{{.PeerPort}}:{{.PeerPort}}
+    volumes:
+      - ./data:/data
+      - ./certs/ca.pem:/certs/ca.pem:ro
+      - ./certs/etcd.pem:/certs/etcd.pem:ro
+      - ./certs/etcd-key.pem:/certs/etcd-key.pem:ro
+    environment:
+      - ETCD_NAME={{.Name}}
+      - ETCD_DATA_DIR=/data/{{.Name}}.etcd
+
+      - ETCD_LISTEN_CLIENT_URLS={{.ListenClientURL}}
+      - ETCD_ADVERTISE_CLIENT_URLS={{.AdvertiseClientURL}}
+
+      - ETCD_LISTEN_PEER_URLS={{.ListenPeerURL}}
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS={{.AdvertisePeerURL}}
+      - ETCD_INITIAL_CLUSTER={{.InitialCluster | join}}
+      - ETCD_INITIAL_CLUSTER_STATE={{.ClusterState}}
+      - ETCD_INITIAL_CLUSTER_TOKEN={{.Token}}
+
+      - ETCD_CERT_FILE=/certs/etcd.pem
+      - ETCD_KEY_FILE=/certs/etcd-key.pem
+      - ETCD_CLIENT_CERT_AUTH=true
+      - ETCD_TRUSTED_CA_FILE=/certs/ca.pem
+
+      - ETCD_PEER_CERT_FILE=/certs/etcd.pem
+      - ETCD_PEER_KEY_FILE=/certs/etcd-key.pem
+      - ETCD_PEER_CLIENT_CERT_AUTH=true
+      - ETCD_PEER_TRUSTED_CA_FILE=/certs/ca.pem
+
+      - ETCD_DEBUG={{.Debug}}

@@ -1,0 +1,7 @@
+/config.yaml
+/gen
+
+*.bak
+*.orig
+*~
+.*.swp
